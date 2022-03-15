@@ -48,7 +48,19 @@ pathogen[12]
     ## [1] "Salmonella"
 
 The model:
-`model = MCMCglmm(cbind(Npositive,Ntested-Npositive) ~ scale(Temp)+scale(Prec)+                    scale(Clutch_MEAN)+scale(Maximum.longevity)+                    scale(Mass)+Migration+Habitat,                   random=~animal,                   pedigree = phy,                  family =  "multinomial2",                  data=df,                  nitt=133000,                   burnin=3000,                   thin=100)`
+
+``` r
+model = MCMCglmm(cbind(Npositive,Ntested-Npositive) ~ scale(Temp)+scale(Prec)+
+                   scale(Clutch_MEAN)+scale(Maximum.longevity)+
+                   scale(Mass)+Migration+Habitat, 
+                 random=~animal, 
+                 pedigree = phy,
+                 family =  "multinomial2",
+                 data=df,
+                 nitt=133000, 
+                 burnin=3000, 
+                 thin=100)
+```
 
 ``` r
 summary(model)
@@ -59,34 +71,34 @@ summary(model)
     ##  Thinning interval  = 100
     ##  Sample size  = 1300 
     ## 
-    ##  DIC: 7145.82 
+    ##  DIC: 7145.854 
     ## 
     ##  G-structure:  ~animal
     ## 
     ##        post.mean l-95% CI u-95% CI eff.samp
-    ## animal     3.615   0.5422    7.809    299.8
+    ## animal     3.107   0.1906    6.345      353
     ## 
     ##  R-structure:  ~units
     ## 
     ##       post.mean l-95% CI u-95% CI eff.samp
-    ## units     2.785    1.777    4.096     1300
+    ## units     2.837    1.694    4.009     1136
     ## 
     ##  Location effects: cbind(Npositive, Ntested - Npositive) ~ scale(Temp) + scale(Prec) + scale(Clutch_MEAN) + scale(Maximum.longevity) + scale(Mass) + Migration + Habitat 
     ## 
     ##                           post.mean l-95% CI u-95% CI eff.samp   pMCMC    
-    ## (Intercept)                -5.36566 -8.81602 -2.26305     1300 0.00308 ** 
-    ## scale(Temp)                 0.89353  0.43221  1.41726     1300 < 8e-04 ***
-    ## scale(Prec)                 0.20905 -0.12564  0.52075     1976 0.21846    
-    ## scale(Clutch_MEAN)         -0.41312 -1.11670  0.33288     1300 0.23231    
-    ## scale(Maximum.longevity)   -0.09220 -0.73404  0.50795     1537 0.79538    
-    ## scale(Mass)                 0.60330  0.10430  1.03104     1446 0.01385 *  
-    ## MigrationPartialMigratory   1.55723  0.17519  2.81607     1008 0.01538 *  
-    ## MigrationSedentary          1.56183  0.08332  3.05943      997 0.02769 *  
-    ## HabitatForest              -0.22546 -2.84277  2.48310     1300 0.86769    
-    ## HabitatFreshwater          -0.52682 -3.58697  2.53493     1432 0.73846    
-    ## HabitatGrassland           -0.69515 -3.25141  1.91756     1300 0.58308    
-    ## HabitatHuman Modified      -0.62629 -3.43626  2.04129     1300 0.64462    
-    ## HabitatMarine              -1.39958 -4.45430  2.04821     1300 0.39846    
+    ## (Intercept)                 -5.3532  -8.4239  -1.7519   1300.0 0.00462 ** 
+    ## scale(Temp)                  0.8982   0.3940   1.3656   1300.0 < 8e-04 ***
+    ## scale(Prec)                  0.2030  -0.1462   0.5148   1160.5 0.21077    
+    ## scale(Clutch_MEAN)          -0.3935  -1.1038   0.3402   1300.0 0.25077    
+    ## scale(Maximum.longevity)    -0.1011  -0.7719   0.5082   1300.0 0.78615    
+    ## scale(Mass)                  0.5975   0.1164   1.0364   1136.9 0.01385 *  
+    ## MigrationPartialMigratory    1.5243   0.1569   2.7929   1157.3 0.01538 *  
+    ## MigrationSedentary           1.5320   0.1011   2.9129    965.3 0.02615 *  
+    ## HabitatForest               -0.2588  -2.9297   2.4442   1300.0 0.82615    
+    ## HabitatFreshwater           -0.5233  -3.7693   2.3591   1300.0 0.72615    
+    ## HabitatGrassland            -0.7130  -3.3601   1.8777   1082.2 0.59231    
+    ## HabitatHuman Modified       -0.6695  -3.2809   2.3043   1300.0 0.60308    
+    ## HabitatMarine               -1.3539  -4.6529   1.7546   1300.0 0.38769    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -116,4 +128,4 @@ Again mixed well - a little bit pattern in animal (species), OK?
 R2(model)
 ```
 
-    ## [1] 0.665
+    ## [1] 0.637
