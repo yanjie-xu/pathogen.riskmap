@@ -58,7 +58,7 @@ for (i in pathogen){
                                scale(Mass)+Migration+Habitat, 
                              random=~animal, 
                              pedigree = phy,
-                             family =  "multinomial2",
+                             family ="multinomial2",
                              data=df,
                              nitt=133000, 
                              burnin=3000, 
@@ -66,7 +66,28 @@ for (i in pathogen){
 }
 save(model_list, file = "models.Rdata")
 
+i=1
 summary(model_list[[i]])
 plot(model_list[[i]]$Sol)
 plot(model_list[[i]]$VCV)
 R2(model_list[[i]])
+
+
+
+
+
+#Model selection
+library(MuMIn)
+MCMCglmm.updateable = updateable(MCMCglmm)
+global.model = MCMCglmm.updateable(cbind(Npositive,Ntested-Npositive) ~ scale(Temp)+scale(Prec)+
+                                               scale(Clutch_MEAN)+scale(Maximum.longevity)+
+                                               scale(Mass)+Migration+Habitat, 
+                                             random=~animal, 
+                                             pedigree = phy,
+                                             family ="multinomial2",
+                                             data=df,
+                                             nitt=133000, 
+                                             burnin=3000, 
+                                             thin=100)
+d = dredge(global.model, rank="DIC")
+best = subset(d, DIC==0)
