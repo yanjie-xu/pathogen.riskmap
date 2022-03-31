@@ -35,17 +35,20 @@ preva_trait = preva_trait %>%
                                    `2`="PartialMigratory",
                                    `3`='FullMigratory'))%>% 
   mutate(Habitat = dplyr::recode(Habitat,
-                                 `Marine`="Marine",
-                                 `Coastal`="Marine",
-                                 `Wetland`='Freshwater',
-                                 `Riverine`="Freshwater",
-                                 `Grassland`="Grassland",
+                                 `Marine`="Water",
+                                 `Coastal`="Water",
+                                 `Wetland`='Water',
+                                 `Riverine`="Water",
+                                 `Grassland`="Open",
                                  `Shrubland`='Forest',
                                  `Forest`="Forest",
                                  `Woodland`='Forest', 
-                                 `Rock`="Bareland",
-                                 `Desert`='Bareland',
+                                 `Rock`="Open",
+                                 `Desert`='Open',
                                  `Human Modified`='Human Modified'))
+
+
+
 
 
 par(mar=c(2,2,2,2))
@@ -73,21 +76,22 @@ plot(model_list[[i]]$VCV)
 R2(model_list[[i]])
 
 
+#Model selection - full model used
+#library(MuMIn)
+#MCMCglmm.updateable = updateable(MCMCglmm)
+#global.model = MCMCglmm.updateable(cbind(Npositive,Ntested-Npositive) ~ scale(Temp)+scale(Prec)+
+#                                               scale(Clutch_MEAN)+scale(Maximum.longevity)+
+#                                               scale(Mass)+Migration+Habitat, 
+#                                             random=~animal, 
+#                                             pedigree = phy,
+#                                             family ="multinomial2",
+#                                             data=df,
+#                                             nitt=133000, 
+#                                             burnin=3000, 
+#                                             thin=100)
+#d = dredge(global.model, rank="DIC")
+#best = subset(d, DIC==0)
+
+load('models.Rdata')
 
 
-
-#Model selection
-library(MuMIn)
-MCMCglmm.updateable = updateable(MCMCglmm)
-global.model = MCMCglmm.updateable(cbind(Npositive,Ntested-Npositive) ~ scale(Temp)+scale(Prec)+
-                                               scale(Clutch_MEAN)+scale(Maximum.longevity)+
-                                               scale(Mass)+Migration+Habitat, 
-                                             random=~animal, 
-                                             pedigree = phy,
-                                             family ="multinomial2",
-                                             data=df,
-                                             nitt=133000, 
-                                             burnin=3000, 
-                                             thin=100)
-d = dredge(global.model, rank="DIC")
-best = subset(d, DIC==0)
