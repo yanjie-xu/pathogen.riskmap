@@ -120,16 +120,16 @@ preva_trait = preva_trait %>%
                                    `2`="PartialMigratory",
                                    `3`='FullMigratory'))%>% 
   mutate(Habitat = dplyr::recode(Habitat,
-                                   `Marine`="Marine",
-                                   `Coastal`="Marine",
-                                   `Wetland`='Freshwater',
-                                   `Riverine`="Freshwater",
-                                   `Grassland`="Grassland",
+                                   `Marine`="Water",
+                                   `Coastal`="Water",
+                                   `Wetland`='Water',
+                                   `Riverine`="Water",
+                                   `Grassland`="Open",
                                    `Shrubland`='Forest',
                                    `Forest`="Forest",
                                    `Woodland`='Forest', 
-                                   `Rock`="Bareland",
-                                   `Desert`='Bareland',
+                                   `Rock`="Open",
+                                   `Desert`='Open',
                                    `Human Modified`='Human Modified'))
 
 
@@ -196,15 +196,32 @@ summary(model_np) #DIC = 7149 (no phylogeny) vs. 7146 (full model)
 R2(model_np) #0.452 vs. 0.588 
 #Not large but there is an effect of host phylogeny
 
-#use the model to predict prevalence for each species * grid combination
-load("data4predict.RData")
-predict2 = na.omit(predict2)
-predict2 = predict2 %>% mutate(Migration = 
-                                 dplyr::recode(Migration, 
-                                               `1`="Sedentary",
-                                               `2`="PartialMigratory",
-                                               `3`='FullMigratory'))
 
+
+#Model validation----
+#Cross validation: randomly select 70% train and 30% validation
+i = 12
+
+df = preva_trait[preva_trait$Pathogen == pathogen[i],]
+dft = df[sample(nrow(df), round(0.7*nrow(df))),]
+dfv = subset(df, !(df$X.x %in% dft$X.x))
+model = MCMCglmm(cbind(Npositive,Ntested-Npositive) ~ scale(Temp)+scale(Prec)+
+                             scale(Clutch_MEAN)+scale(Maximum.longevity)+
+                             scale(Mass)+Migration+Habitat, 
+                           random=~animal, 
+                           pedigree = phy,
+                           family ="multinomial2",
+                           data=dft,
+                           nitt=133000, 
+                           burnin=3000, 
+                           thin=100)
+
+validate = cbind(dfv, predict.MCMCglmm(model, newdata=dfv))
+names(validate)[27] = 'pred'
+plot(log(validate$pred)~log(validate$Npositive))
+summary(lm(pred~Npositive, data = validate))
+
+bayestestR::area_under_curve(validate$pred, validate$Npositive, method = "spline")
 
 #'use the model to predict prevalence for each species * grid combination
 load("data4predict.RData")
