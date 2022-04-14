@@ -6,6 +6,7 @@ library(car)
 library(MCMCglmm)
 library(dplyr)
 library(lme4)
+library(phytools)
 #Calculate R squared for MCMCglmm
 R2 <- function(mod){
   fixed_eff <- colMeans(mod$Sol)
@@ -21,10 +22,13 @@ R2 <- function(mod){
 
 #Data
 load('alldata.RData')
-# Input data: select one tree from the 1000 treeset
-phy=tree$tree_8551
+# Input data: 
+# get the averaged tree from the 1000 trees:
+phy = averageTree(tree,method="quadratic.path.difference")
+#Or: select one tree from the 1000 treeset
+#phy=tree$tree_8551
 plot(phy,type='fan')
-#To be solved: How to get the averaged tree from the 1000 trees?
+
 
 #Input data: subset prevalence data by pathogen
 #Only pathogenic taxa with over 100 observations are included in this analysis
