@@ -129,3 +129,40 @@ validate_df_list[[pathogen[i]]] = validate.df
 load('models.Rdata')
 save(model_list, validate_result_list, validate_df_list, file = "models.Rdata")
 
+
+#Prediction----
+load('modelinput.Rdata')
+load('models.Rdata')
+load("data4predict.RData")
+
+#Habitat classification
+predict2 = predict2 %>% 
+  mutate(Migration = dplyr::recode(Migration,
+                                   `1`="Sedentary",
+                                   `2`="PartialMigratory",
+                                   `3`='FullMigratory'))%>% 
+  mutate(Habitat = dplyr::recode(Habitat,
+                                 `Marine`="Water",
+                                 `Coastal`="Water",
+                                 `Wetland`='Water',
+                                 `Riverine`="Water",
+                                 `Grassland`="Open",
+                                 `Shrubland`='Forest',
+                                 `Forest`="Forest",
+                                 `Woodland`='Forest', 
+                                 `Rock`="Open",
+                                 `Desert`='Open',
+                                 `Human Modified`='Human Modified'))
+
+
+#Add clutch size for one species that was not in the available databases
+predict2[predict2$species =="Cuculus saturatus",]$Clutch_MEAN = 1
+#exclude five observations for two species without clutch size (all non-native)
+predict2 = na.omit(predict2)
+save.image("all4predict.Rdata")
+#Now all ready for prediction
+i = pathogen[2]
+#Set predicted prevalence to range from 0 to 100
+Npositive = 0
+Ntested = 100
+predictresult = cbind(predict2, predict.MCMCglmm(model_list[[i]], newdata=predict2))
