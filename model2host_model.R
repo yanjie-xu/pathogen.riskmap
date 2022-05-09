@@ -23,8 +23,10 @@ R2 <- function(mod){
 #Data
 load('alldata.RData')
 # Input data: 
-# get the averaged tree from the 1000 trees:
-phy = averageTree(tree,method="quadratic.path.difference")
+# get the consensus tree from the 1000 trees:
+phy = consensus(tree)
+# Or: get the averaged tree from the 1000 trees:
+# phy = averageTree(tree,method="quadratic.path.difference")
 #Or: select one tree from the 1000 treeset
 #phy=tree$tree_8551
 plot(phy,type='fan')
